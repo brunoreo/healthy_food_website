@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthyBite</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>
+      <i class="fas fa-carrot icon"></i>
+      FIND BETTER
+    </h1>
+
+    <input
+      id="foodInput"
+      type="text"
+      placeholder="Enter a food..."
+    >
+
+    <button onclick="getAlternative()">
+      <i class="fas fa-search icon"></i>
+      Find Alternative
+    </button>
+
+    <!-- Refresh button using CSS class -->
+    <button class="refresh-btn" onclick="refreshPage()">
+      ⟳
+    </button>
+
+    <p id="result">
+      <i class="fas fa-utensils icon"></i>
+      Your healthy alternative will appear here.
+    </p>
+
+  </div>
+ <footer>
+  <p>HealhyBite,choose a healthier alternative to what you eat!</p>
+      <p>© 2025 HealthyBite | By: Bruno | Email: bruno.noukui@ictu.edu.cm</p>
+    </footer>
+
+
+  <script>
+    async function getAlternative() {
+      const food = document.getElementById("foodInput").value;
+
+      if (!food) {
+        alert("Please enter a food first!");
+        return;
+      }
+
+      document.getElementById("result").innerHTML =
+        '<i class="fas fa-spinner fa-spin icon"></i> Thinking...';
+
+      try {
+        const response = await fetch("http://localhost:5000/api/alternative", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ food })
+        });
+
+        const data = await response.json();
+
+        document.getElementById("result").innerHTML =
+          `<i class="fas fa-leaf icon"></i> ${data.alternative || data.error}`;
+      } catch (error) {
+        console.error(error);
+        document.getElementById("result").innerHTML =
+          "❌ Error fetching alternative.";
+      }
+    }
+
+    function refreshPage() {
+      document.getElementById("foodInput").value = '';
+      document.getElementById("result").innerHTML =
+        '<i class="fas fa-utensils icon"></i> Your healthy alternative will appear here.';
+      document.getElementById("foodInput").focus();
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,183 @@
+/* style.css */
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Page background */
+body {
+  font-family: 'Roboto', sans-serif;
+
+  background-image: url("./images/health.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Desktop only: fixed background */
+@media (min-width: 769px) {
+  body {
+    background-attachment: fixed;
+  }
+}
+
+/* Mobile background: shrink image to top-left */
+@media (max-width: 768px) {
+  body {
+    background-image: url("./images/health.png");
+    background-attachment: scroll;
+
+    background-size: contain;     /* Shrink to fit inside viewport */
+    background-position: top left; /* Stick to top-left */
+    background-repeat: no-repeat;  /* Prevent tiling */
+  }
+}
+
+/* Title */
+h1 {
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Main container */
+.container {
+  width: 90%;
+  max-width: 400px;
+
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 28px 24px;
+
+  border-radius: 20px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo — responsive */
+.container img {
+  display: block;
+  width: 140px;
+  max-width: 70%;
+  height: auto;
+
+  margin-bottom: 18px;
+
+  flex-shrink: 0; /* Prevent disappearing on small screens */
+  object-fit: contain;
+}
+
+/* Input */
+input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+
+  border-radius: 12px;
+  border: 1px solid #ccc;
+
+  margin-bottom: 14px;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+
+  background-color: #4CAF50;
+  color: #fff;
+
+  border: none;
+  border-radius: 12px;
+
+  font-size: 1rem;
+  cursor: pointer;
+
+  transition: background-color 0.3s ease, transform 0.15s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+}
+
+/* Result */
+#result {
+  margin-top: 18px;
+  font-size: 1.05rem;
+  color: #555;
+}
+
+/*refresh*/
+/* Refresh button styling */
+.refresh-btn {
+  margin-top: 10px;
+  background-color: #f44336;
+  color: white;
+  font-size: 1.2rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background-color: #d32f2f;
+  transform: translateY(-1px);
+}
+
+
+
+/* Icons */
+.icon {
+  color: #4CAF50;
+  margin-right: 6px;
+}
+
+
+
+
+
+
+/* Page wrapper to allow footer at the bottom */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* full viewport height */
+  width: 100%;        /* ensure full width */
+}
+
+/* Container stays centered but does not affect footer */
+.container {
+  margin: 40px auto 20px auto;
+  max-width: 400px;
+  width: 90%;
+}
+
+/* Footer */
+footer {
+  margin-top: auto; /* push to bottom */
+  width: 100%;      /* full page width */
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 0.95rem;
+}
