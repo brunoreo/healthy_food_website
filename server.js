@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // <-- Paste your OpenRouter key here -->
-const OPENROUTER_KEY = "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";
+const OPENROUTER_KEY = "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";
 
 app.post("/api/alternative", async (req, res) => {
   const { food } = req.body;
@@ -40,6 +40,7 @@ app.post("/api/alternative", async (req, res) => {
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 */
 const express = require("express");
 const cors = require("cors");
