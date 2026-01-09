@@ -175,7 +175,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 */
 
-
 // backend/index.js
 const express = require("express");
 const cors = require("cors");
@@ -186,10 +185,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Use environment variable for OpenRouter key
+// OpenRouter API key from environment variables
 const OPENROUTER_KEY = process.env.OPENROUTER_KEY;
 
-// Root route to test backend
+// Root route for testing
 app.get("/", (req, res) => {
   res.send("HealthyBite backend is running!");
 });
@@ -201,8 +200,8 @@ app.post("/api/alternative", async (req, res) => {
   if (!food) return res.status(400).json({ error: "Food is required" });
 
   try {
-    // Prompt GPT to return a healthier alternative (AI might include some extra text)
-    const prompt = `Suggest a healthier alternative to "${food}". You can give a short sentence, but I only want to extract the actual food name for a recipe search.`;
+    // Ask GPT for a healthier alternative with a short explanation
+    const prompt = `Suggest a healthier alternative to "${food}" with a short explanation.`;
 
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
@@ -220,20 +219,24 @@ app.post("/api/alternative", async (req, res) => {
 
     const aiAnswer = response.data.choices[0].message.content.trim();
 
-    // Extract only the alternative food name
-    // Example: "A healthier alternative to French fries is **baked sweet potato fries**"
-    let alternativeName = aiAnswer.split(" is ")[1]?.replace(/\*\*/g, "").trim();
+    // Extract the main food name from the AI response for the recipe link
+    // Example: "A healthier alternative to French fries is **baked sweet potato fries**."
+    let alternativeName = aiAnswer
+      .split(" is ")[1]          // take part after "is"
+      ?.replace(/\*\*/g, "")     // remove any markdown bold **
+      .split(".")[0]             // remove extra sentences
+      .trim();
 
-    // Fallback if AI doesn't use "is"
-    if (!alternativeName) alternativeName = aiAnswer;
+    // Fallback: if extraction fails, just use the original food
+    if (!alternativeName) alternativeName = food;
 
-    // Generate BBC Good Food search link
+    // Create a BBC Good Food search link
     const recipeLink = `https://www.bbcgoodfood.com/search/recipes?q=${encodeURIComponent(alternativeName)}`;
 
-    // Return JSON
+    // Return both explanation AND clean link
     res.json({
-      alternative: alternativeName, // e.g., "baked sweet potato fries"
-      recipeLink,                  // clean BBC Good Food search link
+      alternative: aiAnswer,  // full explanation for frontend display
+      recipeLink              // link to BBC Good Food recipes
     });
 
   } catch (err) {
