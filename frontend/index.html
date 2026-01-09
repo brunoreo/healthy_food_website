@@ -51,7 +51,7 @@
     </footer>
 
 
-  <script>
+  <!-- <script>
     async function getAlternative() {
       const food = document.getElementById("foodInput").value;
 
@@ -89,5 +89,44 @@
     }
   </script>
 
+</body>
+</html> -->
+
+<script>
+  async function getAlternative() {
+    const food = document.getElementById("foodInput").value;
+
+    if (!food) {
+      alert("Please enter a food first!");
+      return;
+    }
+
+    document.getElementById("result").innerHTML =
+      '<i class="fas fa-spinner fa-spin icon"></i> Thinking...';
+
+    try {
+      const response = await fetch("https://healthybite-xrn3.onrender.com/api/alternative", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ food })
+      });
+
+      const data = await response.json();
+
+      // Display the alternative AND the BBC Good Food link
+      document.getElementById("result").innerHTML = `
+        <i class="fas fa-leaf icon"></i> ${data.alternative || data.error}
+        <br><br>
+        <a href="${data.recipeLink}" target="_blank" rel="noopener noreferrer">
+          🔗 View recipes on BBC Good Food
+        </a>
+      `;
+    } catch (error) {
+      console.error(error);
+      document.getElementById("result").innerHTML =
+        "❌ Error fetching alternative.";
+    }
+  }
+</script>
 </body>
 </html>
