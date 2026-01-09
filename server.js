@@ -115,6 +115,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 */
 
+
+/*
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
@@ -169,5 +171,77 @@ app.post("/api/alternative", async (req, res) => {
   }
 });
 
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+*/
+
+
+// backend/index.js
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
+const app = express();
+
+// Enable CORS so frontend can access backend
+app.use(cors());
+app.use(express.json());
+
+// Use environment variable for OpenRouter key
+const OPENROUTER_KEY = process.env.OPENROUTER_KEY;
+
+// Root route to test backend
+app.get("/", (req, res) => {
+  res.send("HealthyBite backend is running!");
+});
+
+// API route for fetching healthier alternatives
+app.post("/api/alternative", async (req, res) => {
+  const { food } = req.body;
+
+  if (!food) return res.status(400).json({ error: "Food is required" });
+
+  try {
+    // Prompt GPT to return a healthier alternative (AI might include some extra text)
+    const prompt = `Suggest a healthier alternative to "${food}". You can give a short sentence, but I only want to extract the actual food name for a recipe search.`;
+
+    const response = await axios.post(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${OPENROUTER_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const aiAnswer = response.data.choices[0].message.content.trim();
+
+    // Extract only the alternative food name
+    // Example: "A healthier alternative to French fries is **baked sweet potato fries**"
+    let alternativeName = aiAnswer.split(" is ")[1]?.replace(/\*\*/g, "").trim();
+
+    // Fallback if AI doesn't use "is"
+    if (!alternativeName) alternativeName = aiAnswer;
+
+    // Generate BBC Good Food search link
+    const recipeLink = `https://www.bbcgoodfood.com/search/recipes?q=${encodeURIComponent(alternativeName)}`;
+
+    // Return JSON
+    res.json({
+      alternative: alternativeName, // e.g., "baked sweet potato fries"
+      recipeLink,                  // clean BBC Good Food search link
+    });
+
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+// Use dynamic port for Render or fallback to 5000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
